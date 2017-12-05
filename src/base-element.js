@@ -751,6 +751,25 @@ export class BaseElement {
   }
 
   /**
+   * Configures the supplied element to have an "intrinsic" layout. The
+   * exact interpretation of "intrinsic" depends on the element's layout.
+   *
+   * If `opt_replacedContent` is specified, it indicates whether the "replaced
+   * content" styling should be applied. Replaced content is not allowed to
+   * have its own paddings or border.
+   *
+   * @param {!Element} element
+   * @param {boolean=} opt_replacedContent
+   * @public @final
+   */
+  applyIntrinsicContent(element, opt_replacedContent) {
+    element.classList.add('i-amphtml-intrinsic-content');
+    if (opt_replacedContent) {
+      element.classList.add('i-amphtml-replaced-content');
+    }
+  }
+
+  /**
    * Returns the viewport within which the element operates.
    * @return {!./service/viewport/viewport-impl.Viewport}
    */

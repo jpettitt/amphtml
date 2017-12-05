@@ -37,6 +37,7 @@ export const Layout = {
   FILL: 'fill',
   FLEX_ITEM: 'flex-item',
   FLUID: 'fluid',
+  INTRINSIC: 'intrinsic'
 };
 
 
@@ -132,7 +133,8 @@ export function isLayoutSizeDefined(layout) {
       layout == Layout.RESPONSIVE ||
       layout == Layout.FILL ||
       layout == Layout.FLEX_ITEM ||
-      layout == Layout.FLUID);
+      layout == Layout.FLUID ||
+      layout == Layout.INTRINSIC);
 }
 
 
@@ -377,7 +379,7 @@ export function applyStaticLayout(element) {
 
   // Verify layout attributes.
   if (layout == Layout.FIXED || layout == Layout.FIXED_HEIGHT ||
-      layout == Layout.RESPONSIVE) {
+      layout == Layout.RESPONSIVE || layout == Layout.INTRINSIC) {
     user().assert(height, 'Expected height to be available: %s', heightAttr);
   }
   if (layout == Layout.FIXED_HEIGHT) {
@@ -385,12 +387,14 @@ export function applyStaticLayout(element) {
         'Expected width to be either absent or equal "auto" ' +
         'for fixed-height layout: %s', widthAttr);
   }
-  if (layout == Layout.FIXED || layout == Layout.RESPONSIVE) {
+  if (layout == Layout.FIXED || layout == Layout.RESPONSIVE ||
+      layout == Layout.INTRINSIC) {
     user().assert(width && width != 'auto',
         'Expected width to be available and not equal to "auto": %s',
         widthAttr);
   }
-  if (layout == Layout.RESPONSIVE) {
+
+  if (layout == Layout.RESPONSIVE || layout == Layout.INTRINSIC) {
     user().assert(getLengthUnits(width) == getLengthUnits(height),
         'Length units should be the same for width and height: %s, %s',
         widthAttr, heightAttr);
@@ -424,6 +428,13 @@ export function applyStaticLayout(element) {
     });
     element.insertBefore(sizer, element.firstChild);
     element.sizerElement = sizer;
+  } else if (layout == Layout.INTRINSIC) {
+    const intrinsicSizer = element.ownerDocument.createElement('img');
+    intrinsicSizer.classList.add('i-amphtml-sizer', 'resizer');
+    intrinsicSizer.setAttribute('src',
+      `data:image/svg+xml;utf8,<svg height="${height}" width="${width}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"></svg>`);
+    element.insertBefore(intrinsicSizer, element.firstChild);
+    element.sizerElement = intrinsicSizer;
   } else if (layout == Layout.FILL) {
     // Do nothing.
   } else if (layout == Layout.CONTAINER) {
