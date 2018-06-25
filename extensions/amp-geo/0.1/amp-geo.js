@@ -38,11 +38,21 @@
 
 import {Deferred} from '../../../src/utils/promise';
 import {Services} from '../../../src/services';
+
+/**
+ * GOOGLE AND THE AMP PROJECT ARE PROVIDING THIS INFORMATION AS A COURTESY BUT
+ * DO NOT GUARANTEE THE ACCURACY OR COMPLETENESS OF ANY INFORMATION CONTAINED
+ * HEREIN. THIS INFORMATION IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+import {ampGeoPresets} from './amp-geo-presets';
+
 import {getMode} from '../../../src/mode';
 import {isArray, isObject} from '../../../src/types';
 import {isCanary} from '../../../src/experiments';
 import {isJsonScriptTag} from '../../../src/dom';
-import {parseJson} from '../../../src/json';
+import {tryParseJson} from '../../../src/json';
 import {user} from '../../../src/log';
 import {waitForBodyPromise} from '../../../src/dom';
 
@@ -111,10 +121,14 @@ export class AmpGeo extends AMP.BaseElement {
       `${TAG} can only have one <script type="application/json"> child`);
     }
 
+    const config = children.length ?
+      tryParseJson(
+          children[0].textContent,
+          e => user().error(TAG,'Unable to parse JSON', e)
+      ) : {};
+
     /** @type {!Promise<!Object<string, (string|Array<string>)>>} */
-    const geo = this.addToBody_(
-        children.length ?
-          parseJson(children[0].textContent) : {});
+    const geo = this.addToBody_(config || {});
 
     /* resolve the service promise singleton we stashed earlier */
     geoDeferred.resolve(geo);
@@ -154,16 +168,16 @@ export class AmpGeo extends AMP.BaseElement {
       this.country_ = getMode(this.win).geoOverride.toLowerCase();
     }
   }
+
   /**
    * Find matching country groups
    * @param {Object} config
    */
   matchCountryGroups_(config) {
     // ISOCountryGroups are optional but if specified at least one must exist
-    const ISOCountryGroups = /** @type {!Object<string, Array<string>>} */(
+    const ISOCountryGroups = /** @type {!Object<string, !Array<string>>} */(
       config.ISOCountryGroups);
-    const errorPrefix = '<amp-geo> ISOCountryGroups'; // code size
-
+    const errorPrefix = `<${TAG}> ISOCountryGroups`; // code size
     if (ISOCountryGroups) {
       user().assert(
           isObject(ISOCountryGroups),
@@ -177,13 +191,34 @@ export class AmpGeo extends AMP.BaseElement {
         user().assert(
             isArray(ISOCountryGroups[group]),
             `${errorPrefix}[${group}] must be an array`);
-        ISOCountryGroups[group] = ISOCountryGroups[group]
-            .map(country => country.toLowerCase());
-        if (ISOCountryGroups[group].includes(this.country_)) {
+
+        if (this.checkGroup_(ISOCountryGroups[group])) {
           this.matchedGroups_.push(group);
         }
       });
     }
+  }
+
+  /**
+   * checkGroup_() does this.country_  match the group
+   * @param {!Array<string>} countryGroup The group to match against
+   * @return {boolean}
+   */
+  checkGroup_(countryGroup) {
+    let presetCountries = [];
+    countryGroup = countryGroup.map((country, idx) => {
+      if (/^preset-/.test(country)) {
+        user().assert(
+            isArray(ampGeoPresets[country]),
+            `<${TAG}> preset ${country} not found`);
+        delete countryGroup[idx];
+        presetCountries = presetCountries.concat(ampGeoPresets[country]);
+        return;
+      }
+      return country.toLowerCase();
+    }).concat(presetCountries.map(c => c.toLowerCase()));
+
+    return countryGroup.includes(this.country_);
   }
 
   /**

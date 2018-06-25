@@ -65,6 +65,7 @@ import {gltfViewer} from './3d-gltf/index';
 import {mathml} from './mathml';
 import {reddit} from './reddit';
 import {twitter} from './twitter';
+import {yotpo} from './yotpo';
 
 import {_ping_} from '../ads/_ping_';
 
@@ -128,6 +129,7 @@ import {dotandads} from '../ads/dotandads';
 import {eadv} from '../ads/eadv';
 import {eas} from '../ads/eas';
 import {engageya} from '../ads/engageya';
+import {epeex} from '../ads/epeex';
 import {eplanning} from '../ads/eplanning';
 import {ezoic} from '../ads/ezoic';
 import {f1e} from '../ads/f1e';
@@ -173,6 +175,7 @@ import {nativo} from '../ads/nativo';
 import {navegg} from '../ads/navegg';
 import {nend} from '../ads/nend';
 import {netletix} from '../ads/netletix';
+import {noddus} from '../ads/noddus';
 import {nokta} from '../ads/nokta';
 import {openadstream} from '../ads/openadstream';
 import {openx} from '../ads/openx';
@@ -189,6 +192,7 @@ import {pubmine} from '../ads/pubmine';
 import {pulsepoint} from '../ads/pulsepoint';
 import {purch} from '../ads/purch';
 import {quoraad} from '../ads/quoraad';
+import {realclick} from '../ads/realclick';
 import {relap} from '../ads/relap';
 import {revcontent} from '../ads/revcontent';
 import {revjet} from '../ads/revjet';
@@ -220,6 +224,7 @@ import {vmfive} from '../ads/vmfive';
 import {webediads} from '../ads/webediads';
 import {weboramaDisplay} from '../ads/weborama';
 import {widespace} from '../ads/widespace';
+import {wisteria} from '../ads/wisteria';
 import {wpmedia} from '../ads/wpmedia';
 import {xlift} from '../ads/xlift';
 import {yahoo} from '../ads/yahoo';
@@ -245,6 +250,7 @@ const AMP_EMBED_ALLOWED = {
   bringhub: true,
   dable: true,
   engageya: true,
+  epeex: true,
   kuadio: true,
   'mantis-recommend': true,
   mywidget: true,
@@ -328,6 +334,7 @@ register('dotandads', dotandads);
 register('eadv', eadv);
 register('eas', eas);
 register('engageya', engageya);
+register('epeex', epeex);
 register('eplanning', eplanning);
 register('ezoic', ezoic);
 register('f1e', f1e);
@@ -378,6 +385,7 @@ register('nativo', nativo);
 register('navegg', navegg);
 register('nend', nend);
 register('netletix', netletix);
+register('noddus', noddus);
 register('nokta', nokta);
 register('openadstream', openadstream);
 register('openx', openx);
@@ -394,6 +402,7 @@ register('pubmine', pubmine);
 register('pulsepoint', pulsepoint);
 register('purch', purch);
 register('quoraad', quoraad);
+register('realclick', realclick);
 register('reddit', reddit);
 register('relap', relap);
 register('revcontent', revcontent);
@@ -427,6 +436,7 @@ register('vmfive', vmfive);
 register('webediads', webediads);
 register('weborama-display', weboramaDisplay);
 register('widespace', widespace);
+register('wisteria', wisteria);
 register('wpmedia', wpmedia);
 register('xlift' , xlift);
 register('yahoo', yahoo);
@@ -437,6 +447,7 @@ register('yieldbot', yieldbot);
 register('yieldmo', yieldmo);
 register('yieldone', yieldone);
 register('yieldpro', yieldpro);
+register('yotpo', yotpo);
 register('zedo', zedo);
 register('zergnet', zergnet);
 register('zucks', zucks);

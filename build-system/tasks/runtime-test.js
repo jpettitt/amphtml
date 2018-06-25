@@ -73,12 +73,12 @@ function getConfig() {
       reporters: ['super-dots', 'saucelabs', 'karmaSimpleReporter'],
       browsers: argv.saucelabs ? [
         // With --saucelabs, integration tests are run on this set of browsers.
-        'SL_Chrome_latest',
-        'SL_Chrome_android',
+        'SL_Android_latest',
         'SL_Chrome_45',
+        'SL_Chrome_android',
+        'SL_Chrome_latest',
         'SL_Firefox_latest',
         'SL_Safari_latest',
-        'SL_Android_latest',
         // TODO(rsimha, #15510): Enable these.
         // 'SL_iOS_latest',
         // 'SL_Edge_latest',
@@ -94,6 +94,10 @@ function getConfig() {
   return karmaDefault;
 }
 
+/**
+ * Returns an array of ad types.
+ * @return {!Array<string>}
+ */
 function getAdTypes() {
   const namingExceptions = {
     // We recommend 3P ad networks use the same string for filename and type.
@@ -126,8 +130,10 @@ function getAdTypes() {
   return adTypes;
 }
 
-// Mitigates https://github.com/karma-runner/karma-sauce-launcher/issues/117
-// by refreshing the wd cache so that Karma can launch without an error.
+/**
+ * Mitigates https://github.com/karma-runner/karma-sauce-launcher/issues/117
+ * by refreshing the wd cache so that Karma can launch without an error.
+ */
 function refreshKarmaWdCache() {
   exec('node ./node_modules/wd/scripts/build-browser-scripts.js');
 }
@@ -393,12 +399,6 @@ function runTests() {
     c.files = c.files.concat(config.a4aTestPaths);
   } else {
     c.files = c.files.concat(config.testPaths);
-  }
-
-  // Include a simple passing test for sauce labs runs. This is done because
-  // running zero tests on a sauce labs browser throws an error. See #11494.
-  if (argv.saucelabs || argv.saucelabs_lite) {
-    c.files = c.files.concat(config.simpleTestPath);
   }
 
   // c.client is available in test browser via window.parent.karma.config

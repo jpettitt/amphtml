@@ -21,6 +21,7 @@ import {HeadingComponent, HeadingComponentDef} from './components/heading';
 import {LandscapeComponent, LandscapeComponentDef} from './components/landscape';
 import {PortraitComponent, PortraitComponentDef} from './components/portrait';
 import {TextBoxComponent, TextBoxComponentDef} from './components/text-box';
+import {dev} from '../../../../src/log';
 import {htmlFor} from '../../../../src/static-template';
 
 /** @type {string} */
@@ -28,9 +29,9 @@ export const TAG = 'amp-story-bookend';
 
 /**
  * @typedef {{
- *   bookend-version: string,
+ *   bookendVersion: string,
  *   components: !Array<!BookendComponentDef>,
- *   share-providers: !Array<(!JsonObject|string|undefined)>,
+ *   shareProviders: !Array<(!JsonObject|string|undefined)>,
  * }}
  */
 export let BookendDataDef;
@@ -117,7 +118,9 @@ export class BookendComponent {
     return components.reduce((builtComponents, component) => {
       const componentBuilder = componentBuilderInstanceFor(component.type);
       if (!componentBuilder) {
-        return;
+        dev().error(TAG, 'Component type `' + component.type +
+        '` is not supported. Skipping invalid.');
+        return builtComponents;
       }
       componentBuilder.assertValidity(component, el);
       builtComponents.push(componentBuilder.build(component, el));
@@ -126,19 +129,19 @@ export class BookendComponent {
   }
 
   /**
-   * Delegates components to their corresponding template builder.
+   * Delegates components to their corresponding element builder.
    * class.
    * @param {!Array<BookendComponentDef>} components
    * @param {!Document} doc
    * @return {!DocumentFragment}
    */
-  static buildTemplates(components, doc) {
+  static buildElements(components, doc) {
     const fragment = doc.createDocumentFragment();
     components.forEach(component => {
       const {type} = component;
       if (type && componentBuilderInstanceFor(type)) {
         fragment.appendChild(componentBuilderInstanceFor(type)
-            .buildTemplate(component, doc));
+            .buildElement(component, doc));
       }
     });
     return fragment;
